@@ -244,7 +244,7 @@ export default function Footer() {
                 <div className="text-xs text-slate-300 space-y-2 leading-relaxed">
                   <p>1. <strong>Eligibility:</strong> The giveaway is open to all residents in Pappinisseri, Kannur, Kerala, and across India. No purchase or fee is necessary to enter.</p>
                   <p>2. <strong>Entry Limit:</strong> 1 primary entry per valid Indian WhatsApp number. Participants can earn up to 5 additional bonus entries via valid referrals.</p>
-                  <p>3. <strong>Prizes:</strong> 1st Prize: Free Flight Ticket / Vacation Voucher; 2nd Prize: ₹10,000 Cargo Credit; 3rd Prizes: 5x Travel Hampers. Prizes cannot be exchanged for cash.</p>
+                  <p>3. <strong>Prizes:</strong> 1st Prize: Luxury Resort Stay; 2nd Prize: Free Shipment up to 10kg by Nuvana.ex. Prizes cannot be exchanged for cash.</p>
                   <p>4. <strong>Winner Selection:</strong> Winners will be drawn in a transparent digital lucky draw during the official launch ceremony.</p>
                   <p>5. <strong>Contact:</strong> Winners will be notified via registered WhatsApp number within 48 hours of the draw.</p>
                 </div>

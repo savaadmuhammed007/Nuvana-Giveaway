@@ -63,7 +63,7 @@ export default function AdminPage() {
   // Lucky Draw State
   const [isDrawing, setIsDrawing] = useState(false);
   const [winner, setWinner] = useState(null);
-  const [selectedPrizeTier, setSelectedPrizeTier] = useState('1st Prize: Free Flight Ticket');
+  const [selectedPrizeTier, setSelectedPrizeTier] = useState('1st Prize: Luxury Resort Stay');
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -630,12 +630,12 @@ export default function AdminPage() {
                   </p>
                 </div>
 
-                <div className="flex justify-center gap-2">
-                  {['1st Prize: Free Flight Ticket', '2nd Prize: ₹10,000 Cargo Credit', '3rd Prize: Travel Hamper'].map((tier) => (
+                <div className="flex justify-center gap-3">
+                  {['1st Prize: Luxury Resort Stay', '2nd Prize: Free Shipment (Up to 10kg)'].map((tier) => (
                     <button
                       key={tier}
                       onClick={() => setSelectedPrizeTier(tier)}
-                      className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${selectedPrizeTier === tier ? 'bg-amber-400 text-slate-950 font-bold' : 'bg-slate-900 text-slate-400 border border-slate-800'}`}
+                      className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${selectedPrizeTier === tier ? 'bg-amber-400 text-slate-950 font-bold shadow-md shadow-amber-400/20' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'}`}
                     >
                       {tier}
                     </button>

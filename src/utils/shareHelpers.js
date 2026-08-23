@@ -22,7 +22,7 @@ export function buildWhatsAppShareUrl(entryId, refUrl) {
 I just entered the Nuvana.go Pappinisseri Launch Giveaway! (Entry ID: *${entryId}*)
 
 ✈️ *Travels • Worldwide Cargo • Visas • Flight Tickets*
-You can enter for FREE and win exciting prizes including Flight Tickets, Vacation Vouchers & Cargo Credits!
+You can enter for FREE and win exciting prizes including a Luxury Resort Stay & Free Shipment up to 10kg!
 
 👉 Click the link to enter now:
 ${targetUrl}

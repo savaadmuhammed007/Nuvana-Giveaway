@@ -57,54 +57,38 @@ export default function GiveawaySection() {
               </p>
             </div>
 
-            {/* 3 Prize Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+            {/* 2 Prize Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 max-w-3xl mx-auto">
               
-              {/* Prize 1 */}
-              <div className="glass-card p-6 rounded-2xl border border-amber-500/30 text-center relative group hover:border-amber-400 transition-all bg-gradient-to-b from-amber-500/10 to-transparent">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center">
-                  <Plane className="w-6 h-6" />
+              {/* Prize 1: Resort Stay */}
+              <div className="glass-card p-7 sm:p-8 rounded-3xl border border-amber-500/40 text-center relative group hover:border-amber-400 transition-all bg-gradient-to-b from-amber-500/15 via-amber-500/5 to-transparent shadow-xl shadow-amber-500/10">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
+                  <Sparkles className="w-7 h-7 text-amber-400" />
                 </div>
-                <div className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">
-                  🥇 Grand 1st Prize
+                <div className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-1.5 font-mono">
+                  🥇 GRAND 1ST PRIZE
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2 font-heading">
-                  Free Flight Ticket / Vacation Voucher
+                <h3 className="text-2xl font-black text-white mb-2 font-heading tracking-tight">
+                  Luxury Resort Stay
                 </h3>
-                <p className="text-xs text-slate-400">
-                  Return flight ticket or holiday voucher from Kannur (CNN) / Calicut.
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  Complimentary luxury resort getaway experience for you and your family.
                 </p>
               </div>
 
-              {/* Prize 2 */}
-              <div className="glass-card p-6 rounded-2xl border border-emerald-500/30 text-center relative group hover:border-emerald-400 transition-all bg-gradient-to-b from-emerald-500/10 to-transparent">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 flex items-center justify-center">
-                  <Package className="w-6 h-6" />
+              {/* Prize 2: Free Shipment up to 10kg */}
+              <div className="glass-card p-7 sm:p-8 rounded-3xl border border-[#FF6B00]/40 text-center relative group hover:border-[#FF6B00] transition-all bg-gradient-to-b from-[#FF6B00]/15 via-[#FF6B00]/5 to-transparent shadow-xl shadow-[#FF6B00]/10">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#FF6B00]/20 border border-[#FF6B00]/40 text-[#FF6B00] flex items-center justify-center shadow-lg shadow-[#FF6B00]/20 group-hover:scale-110 transition-transform">
+                  <Package className="w-7 h-7 text-[#FF6B00]" />
                 </div>
-                <div className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1">
-                  🥈 2nd Prize
+                <div className="text-xs font-bold uppercase tracking-widest text-[#FF6B00] mb-1.5 font-mono">
+                  🥈 2ND PRIZE
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2 font-heading">
-                  ₹10,000 Global Cargo Credit
+                <h3 className="text-2xl font-black text-white mb-2 font-heading tracking-tight">
+                  Free Shipment (Up to 10kg)
                 </h3>
-                <p className="text-xs text-slate-400">
-                  Free shipping voucher for GCC air cargo or international courier.
-                </p>
-              </div>
-
-              {/* Prize 3 */}
-              <div className="glass-card p-6 rounded-2xl border border-cyan-500/30 text-center relative group hover:border-cyan-400 transition-all bg-gradient-to-b from-cyan-500/10 to-transparent">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 flex items-center justify-center">
-                  <Luggage className="w-6 h-6" />
-                </div>
-                <div className="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-1">
-                  🥉 3rd Prizes (5 Winners)
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2 font-heading">
-                  Premium Travel Hampers
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Luxury travel kit, luggage bags & exclusive Nuvana.go merchandise.
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  100% free international air cargo or express courier shipment up to 10kg by Nuvana.ex.
                 </p>
               </div>
 
