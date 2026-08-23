@@ -286,7 +286,8 @@ export function CampaignProvider({ children }) {
         deleteMultipleEntries,
         updateScriptUrl,
         exportEntriesCSV,
-        showToast
+        showToast,
+        navigateTo
       }}
     >
       {children}

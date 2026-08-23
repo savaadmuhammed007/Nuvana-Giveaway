@@ -17,7 +17,7 @@ import InstagramIcon from './InstagramIcon';
 import { buildDirectWhatsAppInquiry } from '../utils/shareHelpers';
 
 export default function Footer() {
-  const { setIsAdminOpen, setIsQRGenOpen, openGiveaway } = useCampaign();
+  const { setIsAdminOpen, setIsQRGenOpen, openGiveaway, navigateTo } = useCampaign();
   const [legalModal, setLegalModal] = useState(null); // 'terms', 'privacy', 'giveaway'
 
   const scrollToTop = () => {
