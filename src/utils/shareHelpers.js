@@ -2,28 +2,43 @@
  * Social Sharing and Clipboard Helpers
  */
 
+export const CONTACT_CONFIG = {
+  travelsPhone: '+91 755 996 6620',
+  travelsWhatsApp: '917559966620',
+  cargoPhone: '+91 755 996 6621',
+  cargoWhatsApp: '917559966621',
+  email: 'nuvanago.fly@gmail.com',
+  website: 'https://nuvanago.in',
+  websiteDisplay: 'nuvanago.in',
+  address: 'Opp Kattilepalli, Pappinisseri - 670561',
+  locationPin: 'https://maps.google.com/?q=Pappinisseri+Kerala'
+};
+
 export function buildWhatsAppShareUrl(entryId, refUrl) {
-  const targetUrl = refUrl || (typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}?ref=${entryId}` : `https://nuvana.go/?ref=${entryId}`);
+  const targetUrl = refUrl || (typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}?ref=${entryId}` : `https://nuvanago.in/?ref=${entryId}`);
   
   const message = `🎉 *Nuvana.go Pappinisseri Grand Launch Giveaway!* 🎁
 
-ഞാൻ Nuvana.go പാപ്പിനിശ്ശേരി ഓഫീസിന്റെ ലോഞ്ച് ഗിവ്എവേയിൽ പങ്കെടുത്തു! (Entry ID: *${entryId}*)
+I just entered the Nuvana.go Pappinisseri Launch Giveaway! (Entry ID: *${entryId}*)
 
-✈️ *Travel • Cargo • Visa • Flight Tickets*
-നിങ്ങൾക്കും സൗജന്യമായി പങ്കെടുക്കാം, വമ്പൻ സമ്മാനങ്ങൾ നേടാം!
+✈️ *Travels • Worldwide Cargo • Visas • Flight Tickets*
+You can enter for FREE and win exciting prizes including Flight Tickets, Vacation Vouchers & Cargo Credits!
 
-👉 ലിങ്ക് ക്ലിക്ക് ചെയ്ത് പങ്കെടുക്കൂ:
+👉 Click the link to enter now:
 ${targetUrl}
 
-#NuvanaGo #PappinisseriLaunch #KeralaTravels #CargoServices`;
+#NuvanaGo #NuvanaEx #Pappinisseri #KeralaTravels #CargoServices`;
 
   return `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
 }
 
-export function buildDirectWhatsAppInquiry(serviceName = 'General Inquiry') {
-  const officialNumber = '919876543210'; // Default official WhatsApp number (can be updated)
-  const message = `Hello Nuvana.go Pappinisseri team, I saw your *Scan • Explore • Win* launch campaign. I would like to know more about your *${serviceName}* services.`;
-  return `https://wa.me/${officialNumber}?text=${encodeURIComponent(message)}`;
+export function buildDirectWhatsAppInquiry(serviceName = 'General Inquiry', category = 'travel') {
+  const isCargo = category === 'cargo' || serviceName.toLowerCase().includes('cargo') || serviceName.toLowerCase().includes('freight') || serviceName.toLowerCase().includes('baggage') || serviceName.toLowerCase().includes('courier') || serviceName.toLowerCase().includes('shop');
+  const number = isCargo ? CONTACT_CONFIG.cargoWhatsApp : CONTACT_CONFIG.travelsWhatsApp;
+  const brandDivision = isCargo ? 'Nuvana.ex Cargo' : 'Nuvana.go Travels';
+  
+  const message = `Hello ${brandDivision} Pappinisseri team, I would like to enquire about your *${serviceName}* services.`;
+  return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 }
 
 export async function copyToClipboard(text) {

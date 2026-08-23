@@ -9,9 +9,11 @@ import {
   MapPin, 
   Gift, 
   QrCode, 
-  Sparkles,
-  X
+  Sparkles, 
+  X,
+  ExternalLink
 } from 'lucide-react';
+import InstagramIcon from './InstagramIcon';
 import { buildDirectWhatsAppInquiry } from '../utils/shareHelpers';
 
 export default function Footer() {
@@ -48,6 +50,31 @@ export default function Footer() {
             <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
               Your comprehensive international travel agency, GCC express air & sea cargo courier, visa stamping, and 24/7 flight ticketing hub in Pappinisseri, Kerala.
             </p>
+
+            {/* Social Media Links */}
+            <div className="flex items-center gap-3 pt-1">
+              <a
+                href="https://www.instagram.com/nuvana.go/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-semibold text-slate-300 hover:text-cyan-300 transition-colors group"
+              >
+                <InstagramIcon className="w-3.5 h-3.5 text-pink-400" />
+                <span>@nuvana.go</span>
+                <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-cyan-300" />
+              </a>
+
+              <a
+                href="https://www.instagram.com/nuvana.ex/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-semibold text-slate-300 hover:text-amber-300 transition-colors group"
+              >
+                <InstagramIcon className="w-3.5 h-3.5 text-pink-400" />
+                <span>@nuvana.ex</span>
+                <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300" />
+              </a>
+            </div>
 
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
@@ -110,21 +137,38 @@ export default function Footer() {
               Pappinisseri Office
             </h4>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Main Road, Near Railway Station / Highway Junction, Pappinisseri, Kannur, Kerala
+              Opp Kattilepalli, Pappinisseri - 670561, Kannur, Kerala
             </p>
-            <div className="pt-1 flex flex-col gap-1.5 text-xs text-slate-300">
-              <a href="tel:+919876543210" className="hover:text-amber-400 flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-amber-400" />
-                <span>+91 98765 43210</span>
+            <div className="pt-1 flex flex-col gap-2 text-xs text-slate-300">
+              <a href="tel:+917559966620" className="hover:text-cyan-400 flex items-center gap-1.5 transition-colors">
+                <Phone className="w-3.5 h-3.5 text-cyan-400" />
+                <span>+91 755 996 6620 <strong className="text-slate-400 text-[10px]">(Travels)</strong></span>
+              </a>
+              <a href="tel:+917559966621" className="hover:text-[#FF6B00] flex items-center gap-1.5 transition-colors">
+                <Phone className="w-3.5 h-3.5 text-[#FF6B00]" />
+                <span>+91 755 996 6621 <strong className="text-slate-400 text-[10px]">(Cargo)</strong></span>
               </a>
               <a 
-                href={buildDirectWhatsAppInquiry('Footer Contact')} 
+                href="https://wa.me/917559966620"
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="hover:text-emerald-400 text-emerald-400 flex items-center gap-1.5"
+                className="hover:text-emerald-400 text-emerald-400 flex items-center gap-1.5 transition-colors"
               >
                 <MessageCircle className="w-3.5 h-3.5 fill-current" />
-                <span>WhatsApp Support</span>
+                <span>WhatsApp Travels (+91 755 996 6620)</span>
+              </a>
+              <a 
+                href="https://wa.me/917559966621"
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-[#FF6B00] text-[#FF6B00] flex items-center gap-1.5 transition-colors"
+              >
+                <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                <span>WhatsApp Cargo (+91 755 996 6621)</span>
+              </a>
+              <a href="mailto:nuvanago.fly@gmail.com" className="hover:text-amber-400 flex items-center gap-1.5 transition-colors">
+                <Mail className="w-3.5 h-3.5 text-amber-400" />
+                <span>nuvanago.fly@gmail.com</span>
               </a>
             </div>
           </div>

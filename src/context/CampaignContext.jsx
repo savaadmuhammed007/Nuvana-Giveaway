@@ -13,13 +13,23 @@ import { submitGiveawayEntry } from '../services/googleSheets';
 
 const CampaignContext = createContext();
 
+function getRouteFromLocation() {
+  if (typeof window === 'undefined') return 'home';
+  const path = window.location.pathname.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+  const search = window.location.search.toLowerCase();
+
+  if (path.startsWith('/admin') || hash.startsWith('#/admin') || hash === '#admin') {
+    return 'admin';
+  }
+  if (path.startsWith('/giveaway') || hash.startsWith('#/giveaway') || hash === '#giveaway' || search.includes('giveaway=true') || search.includes('page=giveaway')) {
+    return 'giveaway';
+  }
+  return 'home';
+}
+
 export function CampaignProvider({ children }) {
-  const [currentRoute, setCurrentRoute] = useState(
-    typeof window !== 'undefined' && 
-    (window.location.pathname.startsWith('/admin') || window.location.hash.startsWith('#/admin'))
-      ? 'admin' 
-      : 'home'
-  );
+  const [currentRoute, setCurrentRoute] = useState(getRouteFromLocation());
 
   const [qrSource, setQrSource] = useState('pappinisseri-junction');
   const [referredBy, setReferredBy] = useState('');
@@ -42,8 +52,7 @@ export function CampaignProvider({ children }) {
   // Sync route on popstate / hashchange
   useEffect(() => {
     const handleLocationChange = () => {
-      const isPathAdmin = window.location.pathname.startsWith('/admin') || window.location.hash.startsWith('#/admin');
-      setCurrentRoute(isPathAdmin ? 'admin' : 'home');
+      setCurrentRoute(getRouteFromLocation());
     };
 
     window.addEventListener('popstate', handleLocationChange);
@@ -57,8 +66,7 @@ export function CampaignProvider({ children }) {
   const navigateTo = (path) => {
     if (typeof window !== 'undefined') {
       window.history.pushState({}, '', path);
-      const isPathAdmin = path.startsWith('/admin') || path.startsWith('#/admin');
-      setCurrentRoute(isPathAdmin ? 'admin' : 'home');
+      setCurrentRoute(getRouteFromLocation());
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };

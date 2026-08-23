@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Temporary asset archives and extraction
+extracted_frames/
+*.zip

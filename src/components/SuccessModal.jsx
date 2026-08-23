@@ -14,6 +14,7 @@ import {
   Heart,
   ExternalLink
 } from 'lucide-react';
+import InstagramIcon from './InstagramIcon';
 import { buildWhatsAppShareUrl, copyToClipboard } from '../utils/shareHelpers';
 
 export default function SuccessModal() {
@@ -72,7 +73,7 @@ export default function SuccessModal() {
   
   const referralUrl = typeof window !== 'undefined'
     ? `${window.location.origin}${window.location.pathname}?ref=${entryId}`
-    : `https://nuvana.go/?ref=${entryId}`;
+    : `https://nuvanago.in/?ref=${entryId}`;
 
   const handleCopyId = async () => {
     const success = await copyToClipboard(entryId);
@@ -203,8 +204,63 @@ export default function SuccessModal() {
 
         </div>
 
+        {/* Official Social Media Follow Links */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-[#FF6B00]/10 border border-white/10 text-left mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-600 flex items-center justify-center text-white">
+                <InstagramIcon className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-xs font-bold text-white uppercase tracking-wider font-heading">
+                Follow Us on Instagram
+              </span>
+            </div>
+            <span className="text-[10px] font-mono text-slate-400 uppercase">Official Pages</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {/* Nuvana.go Travels */}
+            <a
+              href="https://www.instagram.com/nuvana.go/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-400/50 transition-all duration-300 group"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-300 font-bold text-xs">
+                  GO
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-white block group-hover:text-cyan-300 transition-colors">@nuvana.go</span>
+                  <span className="text-[10px] text-slate-400">Travels & Holidays</span>
+                </div>
+              </div>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-300 transition-colors" />
+            </a>
+
+            {/* Nuvana.ex Cargo */}
+            <a
+              href="https://www.instagram.com/nuvana.ex/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-[#FF6B00]/50 transition-all duration-300 group"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-[#FF6B00]/15 border border-[#FF6B00]/30 flex items-center justify-center text-[#FF6B00] font-bold text-xs">
+                  EX
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-white block group-hover:text-amber-300 transition-colors">@nuvana.ex</span>
+                  <span className="text-[10px] text-slate-400">Cargo & Logistics</span>
+                </div>
+              </div>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#FF6B00] transition-colors" />
+            </a>
+          </div>
+        </div>
+
         {/* Good Luck Footer Message */}
-        <div className="text-center pt-2">
+        <div className="text-center pt-1">
           <p className="text-xs text-amber-300/90 font-medium flex items-center justify-center gap-1.5">
             <span>Winners will be announced on our official launch day. Good luck!</span>
             <Heart className="w-3.5 h-3.5 text-red-500 fill-current" />

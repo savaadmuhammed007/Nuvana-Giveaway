@@ -135,7 +135,7 @@ export default function ReferralSection() {
                     </a>
 
                     <button
-                      onClick={() => handleCopy(typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}?ref=${activeEntry.entryId}` : `https://nuvana.go/?ref=${activeEntry.entryId}`)}
+                      onClick={() => handleCopy(typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}?ref=${activeEntry.entryId}` : `https://nuvanago.in/?ref=${activeEntry.entryId}`)}
                       className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 flex items-center justify-center gap-2"
                     >
                       {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
