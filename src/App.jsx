@@ -4,7 +4,6 @@ import { CampaignProvider, useCampaign } from './context/CampaignContext';
 // Core Sections
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import CampaignStory from './components/CampaignStory';
 import Services from './components/Services';
 import GiveawaySection from './components/GiveawaySection';
 import ReferralSection from './components/ReferralSection';
@@ -42,12 +41,7 @@ function MainExperience() {
           <GiveawaySection />
         </div>
 
-        {/* 3.2 Campaign Story */}
-        <div id="story">
-          <CampaignStory />
-        </div>
-
-        {/* 3.3 Core Travel & Cargo Services */}
+        {/* 3.2 Core Travel & Cargo Services */}
         <div id="services">
           <Services />
         </div>

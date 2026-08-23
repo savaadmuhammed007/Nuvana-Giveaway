@@ -101,12 +101,12 @@ export default function Footer() {
               </li>
               <li>
                 <a href="#services" className="hover:text-amber-400 transition-colors">
-                  Four Core Services
+                  Travel & Cargo Services
                 </a>
               </li>
               <li>
-                <a href="#story" className="hover:text-amber-400 transition-colors">
-                  Our Story
+                <a href="#office" className="hover:text-amber-400 transition-colors">
+                  Pappinisseri Office
                 </a>
               </li>
               <li>
