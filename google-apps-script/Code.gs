@@ -46,6 +46,10 @@ function setupSheet(sheet) {
     headerRange.setHorizontalAlignment("center");
     sheet.setFrozenRows(1);
   }
+  // Ensure the phone number column is formatted as plain text
+  try {
+    sheet.getRange(1, 4, sheet.getMaxRows(), 1).setNumberFormat("@");
+  } catch (e) {}
 }
 
 function doPost(e) {
@@ -93,7 +97,9 @@ function doPost(e) {
     const timestamp = data.timestamp || new Date().toISOString();
     const entryId = data.entryId || "NUV-2026-" + Math.floor(10000 + Math.random() * 90000);
     const fullName = data.fullName || "";
-    const phone = data.phone || "";
+    const rawPhone = String(data.phone || "").trim();
+    // Prefix phone with apostrophe to prevent Google Sheets from interpreting '+' as a formula (#ERROR!)
+    const phone = rawPhone ? "'" + rawPhone.replace(/^'/, '') : "";
     const email = data.email || "";
     const location = data.location || "";
     const service = data.service || "";
@@ -105,7 +111,7 @@ function doPost(e) {
     const entryStatus = data.entryStatus || "Active";
 
     // Duplicate check by phone number (last 10 digits)
-    const phoneClean = String(phone).replace(/\D/g, '').slice(-10);
+    const phoneClean = rawPhone.replace(/\D/g, '').slice(-10);
     if (phoneClean) {
       const allData = sheet.getDataRange().getValues();
       for (let i = 1; i < allData.length; i++) {
@@ -188,7 +194,7 @@ function doGet(e) {
         timestamp: r[0] ? new Date(r[0]).toISOString() : new Date().toISOString(),
         entryId: String(r[1] || ''),
         fullName: String(r[2] || ''),
-        phone: String(r[3] || ''),
+        phone: String(r[3] || '').replace(/^'/, ''),
         email: String(r[4] || ''),
         location: String(r[5] || ''),
         service: String(r[6] || ''),

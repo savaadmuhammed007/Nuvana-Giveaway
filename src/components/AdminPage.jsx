@@ -304,14 +304,6 @@ export default function AdminPage() {
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('qr_sources')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${activeTab === 'qr_sources' ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20' : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'}`}
-                >
-                  <QrCode className="w-4 h-4" />
-                  <span>QR Posters Performance</span>
-                </button>
-
-                <button
                   onClick={() => setActiveTab('draw')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${activeTab === 'draw' ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20' : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'}`}
                 >
@@ -349,10 +341,10 @@ export default function AdminPage() {
 
                 <button
                   onClick={() => setIsQRGenOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5"
+                  className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
                 >
                   <QrCode className="w-4 h-4 text-amber-400" />
-                  <span>Make QR Poster</span>
+                  <span>Campaign QR Poster</span>
                 </button>
               </div>
             </div>
@@ -411,18 +403,17 @@ export default function AdminPage() {
                         <th className="p-3.5">Location</th>
                         <th className="p-3.5">Service</th>
                         <th className="p-3.5 text-center">Referrals</th>
-                        <th className="p-3.5">QR Source</th>
                         <th className="p-3.5 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800/60 bg-slate-950/40">
                       {filteredEntries.length === 0 ? (
                         <tr>
-                          <td colSpan={9} className="p-12 text-center text-slate-400">
+                          <td colSpan={8} className="p-12 text-center text-slate-400">
                             <div className="max-w-sm mx-auto space-y-3">
                               <p className="text-sm font-bold text-white">No Giveaway Entries Recorded</p>
                               <p className="text-xs text-slate-400 leading-relaxed">
-                                Submissions from public QR posters and the website will appear here in real time. If entries were submitted to your Google Sheet, sync below.
+                                Submissions from the public QR poster and website will appear here in real time.
                               </p>
                               <button
                                 onClick={() => syncFromGoogleSheets(true)}
@@ -451,17 +442,24 @@ export default function AdminPage() {
                               </td>
                               <td className="p-3.5 font-mono font-bold text-amber-400">{row.entryId}</td>
                               <td className="p-3.5 font-semibold text-white">{row.fullName}</td>
-                              <td className="p-3.5 font-mono text-slate-300">{row.phone}</td>
+                              <td className="p-3.5 font-mono text-slate-300">
+                                {row.phone === '#ERROR!' ? (
+                                  <span className="text-amber-400 text-[11px] bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 font-sans" title="Set Plain Text in Google Sheet Column D">
+                                    Set Plain Text in Sheet
+                                  </span>
+                                ) : (
+                                  row.phone || <span className="text-slate-500 italic">—</span>
+                                )}
+                              </td>
                               <td className="p-3.5">{row.location}</td>
                               <td className="p-3.5 text-slate-400">{row.service}</td>
                               <td className="p-3.5 text-center font-mono font-bold text-emerald-400">
                                 {row.referralCount || 0} / 5
                               </td>
-                              <td className="p-3.5 font-mono text-[11px] text-slate-500">{row.qrSource}</td>
                               <td className="p-3.5 text-right">
                                 <button
                                   onClick={() => setEntryToDelete(row)}
-                                  className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors"
+                                  className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
                                   title={`Delete entry ${row.entryId}`}
                                 >
                                   <Trash2 className="w-4 h-4" />
@@ -566,59 +564,7 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* TAB 3: QR POSTERS PERFORMANCE */}
-            {activeTab === 'qr_sources' && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-bold text-white font-heading">
-                      Physical QR Poster Locations & Conversion Rates
-                    </h4>
-                    <p className="text-xs text-slate-400">
-                      Determine which public banners/posters in Pappinisseri generate the highest scan-to-entry conversion.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setIsQRGenOpen(true)}
-                    className="px-3.5 py-2 rounded-xl bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5"
-                  >
-                    <QrCode className="w-4 h-4" />
-                    <span>+ New QR Poster</span>
-                  </button>
-                </div>
-
-                <div className="overflow-x-auto rounded-2xl border border-slate-800 glass-card">
-                  <table className="w-full text-left text-xs text-slate-300">
-                    <thead className="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold">
-                      <tr>
-                        <th className="p-3.5">QR Poster / Location</th>
-                        <th className="p-3.5">Source Tag</th>
-                        <th className="p-3.5 text-center">Total Scans</th>
-                        <th className="p-3.5 text-center">Entries</th>
-                        <th className="p-3.5 text-right">Conversion %</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-800/60 bg-slate-950/50">
-                      {qrList.map((item) => (
-                        <tr key={item.key} className="hover:bg-slate-900/50">
-                          <td className="p-3.5 font-semibold text-white">{item.name}</td>
-                          <td className="p-3.5 font-mono text-amber-400">?source={item.key}</td>
-                          <td className="p-3.5 text-center font-mono">{item.scans}</td>
-                          <td className="p-3.5 text-center font-mono font-bold text-emerald-400">{item.entries}</td>
-                          <td className="p-3.5 text-right font-mono font-bold text-white">
-                            <span className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700">
-                              {item.conversion}%
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 4: LUCKY DRAW TOOL */}
+            {/* TAB 3: LUCKY DRAW TOOL */}
             {activeTab === 'draw' && (
               <div className="space-y-6 text-center py-6 glass-panel rounded-3xl border border-slate-800 p-8">
                 <div className="max-w-md mx-auto space-y-2">
