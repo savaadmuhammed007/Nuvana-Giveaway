@@ -95,8 +95,13 @@ export function CampaignProvider({ children }) {
           setSheetTotalEntries(result.totalEntries);
         }
         if (showNotifications) {
-          const count = (result.entries && result.entries.length > 0) ? result.entries.length : result.totalEntries;
-          showToast(`Synced ${count} live entries from Google Sheets!`, 'success');
+          if (Array.isArray(result.entries) && result.entries.length > 0) {
+            showToast(`Synced ${result.entries.length} live entries from Google Sheets!`, 'success');
+          } else if (result.totalEntries > 0) {
+            showToast(`Google Sheet has ${result.totalEntries} entries. Update & Deploy 'New Version' in Apps Script to view row details!`, 'info');
+          } else {
+            showToast('Google Sheet connection verified (0 entries).', 'info');
+          }
         }
         return result;
       } else if (showNotifications) {

@@ -56,7 +56,7 @@ function doPost(e) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     let sheet = ss.getSheetByName(SHEET_NAME);
     if (!sheet) {
-      sheet = ss.insertSheet(SHEET_NAME);
+      sheet = ss.getSheets()[0] || ss.insertSheet(SHEET_NAME);
     }
     setupSheet(sheet);
 
@@ -159,7 +159,10 @@ function doPost(e) {
 function doGet(e) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName(SHEET_NAME);
+    let sheet = ss.getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      sheet = ss.getSheets()[0];
+    }
     if (!sheet) {
       return ContentService.createTextOutput(JSON.stringify({
         status: "success",
