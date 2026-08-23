@@ -79,20 +79,28 @@ export function CampaignProvider({ children }) {
     setTimeout(() => setToast(null), 4500);
   };
 
+  const [sheetTotalEntries, setSheetTotalEntries] = useState(0);
+
   // Sync entries from Google Sheets Web App
   const syncFromGoogleSheets = async (showNotifications = false) => {
     setIsSyncing(true);
     try {
       const result = await fetchGoogleSheetsEntries();
-      if (result.success && Array.isArray(result.entries)) {
-        setEntries(result.entries);
-        saveStoredEntries(result.entries);
-        if (showNotifications) {
-          showToast(`Synced ${result.entries.length} entries from Google Sheets!`, 'success');
+      if (result.success) {
+        if (Array.isArray(result.entries) && result.entries.length > 0) {
+          setEntries(result.entries);
+          saveStoredEntries(result.entries);
         }
-        return result.entries;
+        if (typeof result.totalEntries === 'number') {
+          setSheetTotalEntries(result.totalEntries);
+        }
+        if (showNotifications) {
+          const count = (result.entries && result.entries.length > 0) ? result.entries.length : result.totalEntries;
+          showToast(`Synced ${count} live entries from Google Sheets!`, 'success');
+        }
+        return result;
       } else if (showNotifications) {
-        showToast('Google Sheet connection verified (0 entries found).', 'info');
+        showToast('Google Sheet connection verified.', 'info');
       }
     } catch (e) {
       console.warn('Sync warning:', e);
@@ -289,7 +297,7 @@ export function CampaignProvider({ children }) {
         referredBy,
         myEntry,
         entries,
-        totalCount: entries.length,
+        totalCount: Math.max(entries.length, sheetTotalEntries),
         qrAnalytics,
         googleScriptUrl,
         isSyncing,

@@ -78,23 +78,26 @@ export async function fetchGoogleSheetsEntries() {
   const scriptUrl = (configuredUrl && configuredUrl.trim()) || import.meta.env.VITE_GOOGLE_SCRIPT_URL || DEFAULT_SCRIPT_URL;
 
   if (!scriptUrl || !scriptUrl.startsWith('https://script.google.com/')) {
-    return { success: false, entries: [] };
+    return { success: false, entries: [], totalEntries: 0 };
   }
 
   try {
     const res = await fetch(scriptUrl);
     const data = await res.json();
-    if (data.status === 'success' && Array.isArray(data.entries)) {
+    if (data.status === 'success') {
+      const entries = Array.isArray(data.entries) ? data.entries : [];
+      const totalEntries = typeof data.totalEntries === 'number' ? data.totalEntries : entries.length;
       return {
         success: true,
-        entries: data.entries,
-        totalEntries: data.totalEntries || data.entries.length
+        entries,
+        totalEntries,
+        hasDetailedEntries: Array.isArray(data.entries) && data.entries.length > 0
       };
     }
-    return { success: false, entries: [] };
+    return { success: false, entries: [], totalEntries: 0 };
   } catch (err) {
     console.warn('Failed to fetch from Google Sheets endpoint:', err);
-    return { success: false, entries: [] };
+    return { success: false, entries: [], totalEntries: 0 };
   }
 }
 
