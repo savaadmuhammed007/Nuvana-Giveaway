@@ -15,7 +15,7 @@ const STORAGE_KEYS = {
 // Seed realistic initial entries for Pappinisseri launch campaign activity
 const INITIAL_SEED_ENTRIES = [
   {
-    entryId: 'PAP-2026-00001',
+    entryId: 'NUV-2026-00001',
     fullName: 'Muhammed Shafi',
     phone: '+91 98471 23450',
     email: 'shafi.m@gmail.com',
@@ -23,14 +23,14 @@ const INITIAL_SEED_ENTRIES = [
     service: 'Cargo',
     consent: true,
     qrSource: 'pappinisseri-junction',
-    referralCode: 'PAP-2026-00001',
+    referralCode: 'NUV-2026-00001',
     referredBy: '',
     referralCount: 4,
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 28).toISOString(),
     status: 'Verified'
   },
   {
-    entryId: 'PAP-2026-00002',
+    entryId: 'NUV-2026-00002',
     fullName: 'Anjali Ramesh',
     phone: '+91 94472 88910',
     email: 'anjaliramesh@yahoo.com',
@@ -38,14 +38,14 @@ const INITIAL_SEED_ENTRIES = [
     service: 'Travel',
     consent: true,
     qrSource: 'bus-stand',
-    referralCode: 'PAP-2026-00002',
+    referralCode: 'NUV-2026-00002',
     referredBy: '',
     referralCount: 2,
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 22).toISOString(),
     status: 'Verified'
   },
   {
-    entryId: 'PAP-2026-00003',
+    entryId: 'NUV-2026-00003',
     fullName: 'Faizal Rahman',
     phone: '+91 97455 12093',
     email: 'faizal.dxb@gmail.com',
@@ -53,14 +53,14 @@ const INITIAL_SEED_ENTRIES = [
     service: 'Visa',
     consent: true,
     qrSource: 'keechery-poster',
-    referralCode: 'PAP-2026-00003',
-    referredBy: 'PAP-2026-00001',
+    referralCode: 'NUV-2026-00003',
+    referredBy: 'NUV-2026-00001',
     referralCount: 3,
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(),
     status: 'Verified'
   },
   {
-    entryId: 'PAP-2026-00004',
+    entryId: 'NUV-2026-00004',
     fullName: 'Deepak V. K.',
     phone: '+91 99951 45821',
     email: 'deepakvk@outlook.com',
@@ -68,14 +68,14 @@ const INITIAL_SEED_ENTRIES = [
     service: 'Ticketing',
     consent: true,
     qrSource: 'dharmasala-hub',
-    referralCode: 'PAP-2026-00004',
+    referralCode: 'NUV-2026-00004',
     referredBy: '',
     referralCount: 1,
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
     status: 'Verified'
   },
   {
-    entryId: 'PAP-2026-00005',
+    entryId: 'NUV-2026-00005',
     fullName: 'Nabeel K. P.',
     phone: '+91 96052 77810',
     email: 'nabeelkp@gmail.com',
@@ -83,14 +83,14 @@ const INITIAL_SEED_ENTRIES = [
     service: 'Cargo',
     consent: true,
     qrSource: 'valapattanam-gate',
-    referralCode: 'PAP-2026-00005',
-    referredBy: 'PAP-2026-00001',
+    referralCode: 'NUV-2026-00005',
+    referredBy: 'NUV-2026-00001',
     referralCount: 5,
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
     status: 'Verified'
   },
   {
-    entryId: 'PAP-2026-00006',
+    entryId: 'NUV-2026-00006',
     fullName: 'Sneha Pavithran',
     phone: '+91 94963 11200',
     email: 'sneha.pavi@gmail.com',
@@ -98,8 +98,8 @@ const INITIAL_SEED_ENTRIES = [
     service: 'Multiple Services',
     consent: true,
     qrSource: 'railway-station',
-    referralCode: 'PAP-2026-00006',
-    referredBy: 'PAP-2026-00002',
+    referralCode: 'NUV-2026-00006',
+    referredBy: 'NUV-2026-00002',
     referralCount: 0,
     timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
     status: 'Verified'

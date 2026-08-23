@@ -45,7 +45,7 @@ VITE_GOOGLE_SCRIPT_URL=https://script.google.com/macros/s/AKfycb.../exec
 
 ## 📋 Google Sheet Columns Automatically Formatted:
 1. **Timestamp**: Exact date & time of submission
-2. **Entry ID**: Unique giveaway reference (e.g. `PAP-2026-00421`)
+2. **Entry ID**: Unique giveaway reference (e.g. `NUV-2026-00421`)
 3. **Full Name**: Participant name
 4. **WhatsApp Number**: Validated Indian mobile number
 5. **Email**: Optional email

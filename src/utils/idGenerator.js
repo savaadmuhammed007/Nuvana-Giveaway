@@ -1,11 +1,11 @@
 /**
- * Entry ID Generator for Pappinisseri Launch Giveaway
- * Format: PAP-2026-XXXXX (e.g. PAP-2026-00421)
+ * Entry ID Generator for Nuvana Launch Giveaway
+ * Format: NUV-2026-XXXXX (e.g. NUV-2026-00421) or NUV-XXXXX
  */
 
 export function generateEntryId(sequenceNumber) {
   const currentYear = '2026';
-  const prefix = 'PAP';
+  const prefix = 'NUV';
   
   if (sequenceNumber && typeof sequenceNumber === 'number') {
     const padded = String(sequenceNumber).padStart(5, '0');
@@ -19,5 +19,5 @@ export function generateEntryId(sequenceNumber) {
 
 export function isValidEntryId(id) {
   if (!id || typeof id !== 'string') return false;
-  return /^PAP-2026-\d{4,6}$/i.test(id.trim());
+  return /^(NUV|PAP)(-(2026|2027))?-\d{4,6}$/i.test(id.trim());
 }

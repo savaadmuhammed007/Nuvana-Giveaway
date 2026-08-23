@@ -12,7 +12,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'How does the giveaway work?',
-    answer: 'Simply scan any Nuvana.go QR poster in public spots, fill in your Name, WhatsApp Number, Area, and service interest. You will instantly receive a unique Entry ID (e.g. PAP-2026-00421) which is entered into the official launch prize draw.'
+    answer: 'Simply scan any Nuvana.go QR poster in public spots, fill in your Name, WhatsApp Number, Area, and service interest. You will instantly receive a unique Entry ID (e.g. NUV-2026-00421) which is entered into the official launch prize draw.'
   },
   {
     question: 'Can I participate more than once with the same phone number?',
@@ -20,7 +20,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'How does the referral system work?',
-    answer: 'After entering, you will receive your personal referral link (e.g. ?ref=PAP-2026-00421) and a ready-to-share WhatsApp button. For every friend who enters using your link, your referral count increases and you get +1 bonus entry (up to a maximum of 5 bonus entries).'
+    answer: 'After entering, you will receive your personal referral link (e.g. ?ref=NUV-2026-00421) and a ready-to-share WhatsApp button. For every friend who enters using your link, your referral count increases and you get +1 bonus entry (up to a maximum of 5 bonus entries).'
   },
   {
     question: 'When will the winners be announced?',

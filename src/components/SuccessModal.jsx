@@ -67,7 +67,7 @@ export default function SuccessModal() {
 
   if (!isSuccessOpen || !myEntry) return null;
 
-  const entryId = myEntry.entryId || 'PAP-2026-00001';
+  const entryId = myEntry.entryId || 'NUV-2026-00001';
   const referralCount = myEntry.referralCount || 0;
   const maxReferrals = 5;
   

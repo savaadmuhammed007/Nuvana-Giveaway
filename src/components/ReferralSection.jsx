@@ -158,7 +158,7 @@ export default function ReferralSection() {
                   <form onSubmit={handleSearch} className="flex gap-2">
                     <input
                       type="text"
-                      placeholder="Enter Mobile Number or PAP-2026-XXXXX"
+                      placeholder="Enter Mobile Number or NUV-2026-XXXXX"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 text-xs outline-none focus:border-amber-500 font-mono"
