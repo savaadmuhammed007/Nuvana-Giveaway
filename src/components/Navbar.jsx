@@ -20,22 +20,12 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 sm:h-20">
           
           {/* Logo & Brand */}
-          <a href="#" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-slate-900 border border-amber-500/30 p-1.5 flex items-center justify-center group-hover:border-amber-500/60 transition-all shadow-md">
-              <img 
-                src="/nuvana-logo.png" 
-                alt="Nuvana.go Logo" 
-                className="w-full h-full object-contain filter drop-shadow group-hover:scale-105 transition-transform" 
-              />
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="text-xl font-bold tracking-tight text-white font-heading">
-                Nuvana<span className="text-[#F7941D]">.go</span>
-              </span>
-              <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-400">
-                Cargo • Travels • Visa • Ticketing
-              </span>
-            </div>
+          <a href="#" className="flex items-center group py-1">
+            <img 
+              src="/nuvana-go-logo.png" 
+              alt="Nuvana.go" 
+              className="h-8 sm:h-10 w-auto max-w-[160px] sm:max-w-[210px] object-contain filter drop-shadow group-hover:scale-105 transition-transform duration-200" 
+            />
           </a>
 
           {/* Desktop Navigation */}
