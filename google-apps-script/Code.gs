@@ -169,12 +169,52 @@ function doGet(e) {
     }
 
     const rows = sheet.getDataRange().getValues();
-    const totalEntries = Math.max(0, rows.length - 1);
+    if (rows.length <= 1) {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        totalEntries: 0,
+        entries: []
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const entries = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r[1] && !r[3]) continue; // Skip empty rows
+      entries.push({
+        timestamp: r[0] ? new Date(r[0]).toISOString() : new Date().toISOString(),
+        entryId: String(r[1] || ''),
+        fullName: String(r[2] || ''),
+        phone: String(r[3] || ''),
+        email: String(r[4] || ''),
+        location: String(r[5] || ''),
+        service: String(r[6] || ''),
+        consent: String(r[7] || '') === 'YES' || r[7] === true,
+        referralCode: String(r[8] || r[1] || ''),
+        referredBy: String(r[9] || ''),
+        qrSource: String(r[10] || 'direct-web'),
+        device: String(r[11] || ''),
+        status: String(r[12] || 'Verified'),
+        referralCount: 0
+      });
+    }
+
+    // Calculate dynamic referral counts
+    const refMap = {};
+    entries.forEach(item => {
+      if (item.referredBy) {
+        refMap[item.referredBy] = (refMap[item.referredBy] || 0) + 1;
+      }
+    });
+    entries.forEach(item => {
+      item.referralCount = refMap[item.entryId] || refMap[item.referralCode] || 0;
+    });
 
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
       campaign: "Nuvana.go Pappinisseri Launch 2026",
-      totalEntries: totalEntries
+      totalEntries: entries.length,
+      entries: entries
     })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({

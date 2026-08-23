@@ -1,15 +1,17 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   getStoredEntries, 
+  saveStoredEntries,
   getMyEntry, 
   getQrAnalytics, 
   recordQrScan, 
   getScriptUrlConfig, 
   saveScriptUrlConfig,
   deleteEntryFromStorage,
-  deleteMultipleEntriesFromStorage
+  deleteMultipleEntriesFromStorage,
+  clearAllDemoEntries
 } from '../services/storage';
-import { submitGiveawayEntry } from '../services/googleSheets';
+import { submitGiveawayEntry, deleteEntryFromGoogleSheets, fetchGoogleSheetsEntries } from '../services/googleSheets';
 
 const CampaignContext = createContext();
 
@@ -37,6 +39,7 @@ export function CampaignProvider({ children }) {
   const [entries, setEntries] = useState([]);
   const [qrAnalytics, setQrAnalyticsState] = useState({});
   const [googleScriptUrl, setGoogleScriptUrl] = useState('');
+  const [isSyncing, setIsSyncing] = useState(false);
   
   // Modals & UI states
   const [isGiveawayOpen, setIsGiveawayOpen] = useState(false);
@@ -71,6 +74,36 @@ export function CampaignProvider({ children }) {
     }
   };
 
+  const showToast = (message, type = 'info') => {
+    setToast({ message, type, id: Date.now() });
+    setTimeout(() => setToast(null), 4500);
+  };
+
+  // Sync entries from Google Sheets Web App
+  const syncFromGoogleSheets = async (showNotifications = false) => {
+    setIsSyncing(true);
+    try {
+      const result = await fetchGoogleSheetsEntries();
+      if (result.success && Array.isArray(result.entries)) {
+        setEntries(result.entries);
+        saveStoredEntries(result.entries);
+        if (showNotifications) {
+          showToast(`Synced ${result.entries.length} entries from Google Sheets!`, 'success');
+        }
+        return result.entries;
+      } else if (showNotifications) {
+        showToast('Google Sheet connection verified (0 entries found).', 'info');
+      }
+    } catch (e) {
+      console.warn('Sync warning:', e);
+      if (showNotifications) {
+        showToast('Could not fetch from Google Sheets.', 'warning');
+      }
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   // Initialize on mount
   useEffect(() => {
     // 1. Check URL parameters for ?source= and ?ref=
@@ -98,7 +131,7 @@ export function CampaignProvider({ children }) {
       if (cachedRef) setReferredBy(cachedRef);
     }
 
-    // 2. Load stored entries, active entry, and analytics
+    // 2. Load stored local entries & configuration
     const storedEntries = getStoredEntries();
     setEntries(storedEntries);
     const activeMyEntry = getMyEntry();
@@ -106,40 +139,9 @@ export function CampaignProvider({ children }) {
     setQrAnalyticsState(getQrAnalytics());
     setGoogleScriptUrl(getScriptUrlConfig());
 
-    // 3. Setup realistic live social proof ticker interval
-    const recentSampleNames = [
-      { name: 'Nitheesh K.', place: 'Keecheri', service: 'GCC Cargo' },
-      { name: 'Fathima Zahra', place: 'Pappinisseri Town', service: 'Dubai Visa' },
-      { name: 'Sujith Kumar', place: 'Kalliasseri', service: 'Flight Ticket' },
-      { name: 'Arjun V.', place: 'Aaron', service: 'Europe Tour Package' },
-      { name: 'Ramees K. P.', place: 'Dharmasala', service: 'Express Courier' },
-      { name: 'Ananya S.', place: 'Valapattanam', service: 'Family Holiday' }
-    ];
-
-    let tickerIndex = 0;
-    const tickerInterval = setInterval(() => {
-      const sample = recentSampleNames[tickerIndex % recentSampleNames.length];
-      setRecentNotification({
-        id: Date.now(),
-        name: sample.name,
-        place: sample.place,
-        service: sample.service,
-        time: 'Just now'
-      });
-      tickerIndex++;
-
-      setTimeout(() => {
-        setRecentNotification(null);
-      }, 5000);
-    }, 14000);
-
-    return () => clearInterval(tickerInterval);
+    // 3. Attempt initial sync from Google Sheets
+    syncFromGoogleSheets(false);
   }, []);
-
-  const showToast = (message, type = 'info') => {
-    setToast({ message, type, id: Date.now() });
-    setTimeout(() => setToast(null), 4500);
-  };
 
   const openGiveaway = (serviceName = 'Travel') => {
     setPrefilledService(serviceName);
@@ -161,113 +163,136 @@ export function CampaignProvider({ children }) {
   const submitForm = async (formData) => {
     const payload = {
       ...formData,
-      qrSource: qrSource || 'direct-web',
-      referredBy: referredBy || ''
+      qrSource: formData.qrSource || qrSource,
+      referredBy: formData.referredBy || referredBy
     };
 
     const result = await submitGiveawayEntry(payload);
     
-    // Refresh state
-    setEntries(getStoredEntries());
-    setQrAnalyticsState(getQrAnalytics());
-    
-    if (result.isDuplicate) {
+    if (result.success || result.isDuplicate) {
+      const updated = getStoredEntries();
+      setEntries(updated);
       setMyEntry(result.entry);
-      showToast(result.message, 'warning');
-      setIsGiveawayOpen(false);
-      setIsSuccessOpen(true);
-      return result;
+      setQrAnalyticsState(getQrAnalytics());
+      
+      if (result.isDuplicate) {
+        showToast(result.message, 'warning');
+        setIsGiveawayOpen(false);
+        setIsSuccessOpen(true);
+      } else {
+        showToast('You are officially entered into the Giveaway! 🎉', 'success');
+        setIsGiveawayOpen(false);
+        setIsSuccessOpen(true);
+      }
+    } else {
+      showToast(result.message || 'Failed to submit entry. Please try again.', 'error');
     }
 
-    if (result.success) {
-      setMyEntry(result.entry);
-      setIsGiveawayOpen(false);
-      setIsSuccessOpen(true);
-      showToast('🎉 Giveaway entry submitted successfully! Good luck!', 'success');
-      return result;
-    }
-
-    showToast('Something went wrong. Please try again.', 'error');
     return result;
   };
 
-  const deleteEntry = (entryId) => {
+  const deleteEntry = async (entryId) => {
     const updated = deleteEntryFromStorage(entryId);
     setEntries(updated);
-    setMyEntry(getMyEntry());
-    showToast(`Entry ${entryId} deleted successfully.`, 'info');
+    if (myEntry && myEntry.entryId === entryId) {
+      setMyEntry(null);
+    }
+    showToast(`Entry ${entryId} deleted.`, 'info');
+    await deleteEntryFromGoogleSheets(entryId);
   };
 
-  const deleteMultipleEntries = (entryIds) => {
+  const deleteMultipleEntries = async (entryIds) => {
     const updated = deleteMultipleEntriesFromStorage(entryIds);
     setEntries(updated);
-    setMyEntry(getMyEntry());
-    showToast(`${entryIds.length} entries deleted successfully.`, 'info');
+    if (myEntry && entryIds.includes(myEntry.entryId)) {
+      setMyEntry(null);
+    }
+    showToast(`Deleted ${entryIds.length} entries.`, 'info');
+    for (const id of entryIds) {
+      await deleteEntryFromGoogleSheets(id);
+    }
   };
 
   const updateScriptUrl = (url) => {
     saveScriptUrlConfig(url);
     setGoogleScriptUrl(url);
-    showToast('Google Sheet Webhook URL saved successfully!', 'success');
+    showToast('Google Sheet Web App URL updated!', 'success');
+    syncFromGoogleSheets(true);
+  };
+
+  const resetAllData = () => {
+    clearAllDemoEntries();
+    setEntries([]);
+    setMyEntry(null);
+    showToast('All local data has been reset to 0 entries.', 'info');
   };
 
   const exportEntriesCSV = () => {
-    const data = getStoredEntries();
-    if (!data.length) {
-      showToast('No entries to export', 'warning');
+    if (entries.length === 0) {
+      showToast('No entries to export.', 'warning');
       return;
     }
 
     const headers = [
-      'Timestamp', 'Entry ID', 'Full Name', 'WhatsApp Number', 
-      'Email', 'Location', 'Interested Service', 'Consent', 
-      'Referral Code', 'Referred By', 'Referrals Made', 'QR Source', 'Status'
+      'Entry ID',
+      'Full Name',
+      'Phone',
+      'Email',
+      'Location',
+      'Service',
+      'Consent',
+      'Referral Code',
+      'Referred By',
+      'Referrals Count',
+      'QR Source',
+      'Date Submitted',
+      'Status'
     ];
 
-    const csvRows = [headers.join(',')];
+    const rows = entries.map(e => [
+      e.entryId,
+      `"${(e.fullName || '').replace(/"/g, '""')}"`,
+      `"${e.phone}"`,
+      `"${e.email || ''}"`,
+      `"${e.location || ''}"`,
+      `"${e.service || ''}"`,
+      e.consent ? 'YES' : 'NO',
+      e.referralCode || e.entryId,
+      e.referredBy || '',
+      e.referralCount || 0,
+      e.qrSource || 'direct-web',
+      e.timestamp ? new Date(e.timestamp).toLocaleString() : '',
+      e.status || 'Verified'
+    ]);
 
-    data.forEach(row => {
-      const values = [
-        `"${row.timestamp || ''}"`,
-        `"${row.entryId || ''}"`,
-        `"${(row.fullName || '').replace(/"/g, '""')}"`,
-        `"${row.phone || ''}"`,
-        `"${row.email || ''}"`,
-        `"${(row.location || '').replace(/"/g, '""')}"`,
-        `"${row.service || ''}"`,
-        `"${row.consent ? 'YES' : 'NO'}"`,
-        `"${row.referralCode || ''}"`,
-        `"${row.referredBy || ''}"`,
-        `"${row.referralCount || 0}"`,
-        `"${row.qrSource || ''}"`,
-        `"${row.status || 'Active'}"`
-      ];
-      csvRows.push(values.join(','));
-    });
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(r => r.join(','))
+    ].join('\n');
 
-    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `Nuvana_Pappinisseri_Entries_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `nuvana_giveaway_entries_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Campaign entries exported as CSV!', 'success');
+    showToast('Exported entries as CSV file!', 'success');
   };
 
   return (
     <CampaignContext.Provider
       value={{
         currentRoute,
-        navigateTo,
         qrSource,
         referredBy,
         myEntry,
         entries,
-        totalCount: 1284 + entries.length,
+        totalCount: entries.length,
         qrAnalytics,
         googleScriptUrl,
+        isSyncing,
         isGiveawayOpen,
         isSuccessOpen,
         isQRGenOpen,
@@ -285,6 +310,8 @@ export function CampaignProvider({ children }) {
         deleteEntry,
         deleteMultipleEntries,
         updateScriptUrl,
+        syncFromGoogleSheets,
+        resetAllData,
         exportEntriesCSV,
         showToast,
         navigateTo

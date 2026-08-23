@@ -11,7 +11,7 @@ export async function submitGiveawayEntry(formData) {
   const configuredUrl = getScriptUrlConfig();
   const scriptUrl = (configuredUrl && configuredUrl.trim()) || import.meta.env.VITE_GOOGLE_SCRIPT_URL || DEFAULT_SCRIPT_URL;
 
-  // 1. Always save locally first for instant UI responsiveness & offline safety
+  // 1. Save locally for instant UI responsiveness & offline safety
   const localResult = addEntryToStorage(formData);
   
   if (localResult.isDuplicate) {
@@ -71,6 +71,31 @@ export async function submitGiveawayEntry(formData) {
     ...localResult,
     syncedToSheets: false
   };
+}
+
+export async function fetchGoogleSheetsEntries() {
+  const configuredUrl = getScriptUrlConfig();
+  const scriptUrl = (configuredUrl && configuredUrl.trim()) || import.meta.env.VITE_GOOGLE_SCRIPT_URL || DEFAULT_SCRIPT_URL;
+
+  if (!scriptUrl || !scriptUrl.startsWith('https://script.google.com/')) {
+    return { success: false, entries: [] };
+  }
+
+  try {
+    const res = await fetch(scriptUrl);
+    const data = await res.json();
+    if (data.status === 'success' && Array.isArray(data.entries)) {
+      return {
+        success: true,
+        entries: data.entries,
+        totalEntries: data.totalEntries || data.entries.length
+      };
+    }
+    return { success: false, entries: [] };
+  } catch (err) {
+    console.warn('Failed to fetch from Google Sheets endpoint:', err);
+    return { success: false, entries: [] };
+  }
 }
 
 export async function deleteEntryFromGoogleSheets(entryId) {

@@ -38,6 +38,9 @@ export default function AdminPage() {
     qrAnalytics, 
     googleScriptUrl, 
     updateScriptUrl, 
+    syncFromGoogleSheets,
+    resetAllData,
+    isSyncing,
     exportEntriesCSV,
     deleteEntry,
     deleteMultipleEntries,
@@ -327,6 +330,16 @@ export default function AdminPage() {
 
               <div className="flex items-center gap-2">
                 <button
+                  onClick={() => syncFromGoogleSheets(true)}
+                  disabled={isSyncing}
+                  className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/20 cursor-pointer disabled:opacity-50"
+                  title="Fetch latest entries from Google Sheets"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                  <span>{isSyncing ? 'Syncing...' : 'Sync Sheet'}</span>
+                </button>
+
+                <button
                   onClick={exportEntriesCSV}
                   className="px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5"
                 >
@@ -405,8 +418,21 @@ export default function AdminPage() {
                     <tbody className="divide-y divide-slate-800/60 bg-slate-950/40">
                       {filteredEntries.length === 0 ? (
                         <tr>
-                          <td colSpan={9} className="p-8 text-center text-slate-500">
-                            No entries found matching your search.
+                          <td colSpan={9} className="p-12 text-center text-slate-400">
+                            <div className="max-w-sm mx-auto space-y-3">
+                              <p className="text-sm font-bold text-white">No Giveaway Entries Recorded</p>
+                              <p className="text-xs text-slate-400 leading-relaxed">
+                                Submissions from public QR posters and the website will appear here in real time. If entries were submitted to your Google Sheet, sync below.
+                              </p>
+                              <button
+                                onClick={() => syncFromGoogleSheets(true)}
+                                disabled={isSyncing}
+                                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs inline-flex items-center gap-2 shadow-lg shadow-amber-500/20 cursor-pointer disabled:opacity-50"
+                              >
+                                <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                                <span>{isSyncing ? 'Syncing...' : 'Sync from Google Sheets'}</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ) : (
@@ -677,16 +703,36 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <button
-                    onClick={() => updateScriptUrl(scriptUrlInput)}
-                    className="px-5 py-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold text-xs"
-                  >
-                    Save & Connect Webhook
-                  </button>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      onClick={() => updateScriptUrl(scriptUrlInput)}
+                      className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs cursor-pointer transition-colors"
+                    >
+                      Save & Connect Webhook
+                    </button>
+
+                    <button
+                      onClick={() => syncFromGoogleSheets(true)}
+                      disabled={isSyncing}
+                      className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                      <span>{isSyncing ? 'Syncing...' : 'Sync Data Now'}</span>
+                    </button>
+
+                    <button
+                      onClick={resetAllData}
+                      className="px-4 py-2.5 rounded-xl bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
+                      title="Purge all local cache"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Purge Local Cache (Reset to 0)</span>
+                    </button>
+                  </div>
 
                   <div className="pt-4 border-t border-slate-800 text-[11px] text-slate-400 space-y-1">
-                    <p>💡 Instructions available in <strong>GOOGLE_SHEETS_SETUP.md</strong></p>
-                    <p>🔒 <strong>Protected:</strong> No secret credentials in frontend bundle.</p>
+                    <p>💡 Live submissions are saved to your Google Sheet and cached locally for speed.</p>
+                    <p>🔒 <strong>Protected:</strong> Exact data from Google Sheets is displayed across all tabs.</p>
                   </div>
                 </div>
               </div>
