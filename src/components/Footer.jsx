@@ -123,11 +123,56 @@ export default function Footer() {
               Our Services
             </h4>
             <ul className="space-y-2 text-xs text-slate-400">
-              <li>✈️ Holiday & Travel Packages</li>
-              <li>📦 GCC & Worldwide Express Cargo</li>
-              <li>🛂 Tourist & Work Visa Assistance</li>
-              <li>🎫 Domestic & International Flights</li>
-              <li>📑 Embassy Attestation & Emigration</li>
+              <li>
+                <a 
+                  href={buildDirectWhatsAppInquiry('Holiday & Travel Packages', 'travel')} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:text-cyan-400 transition-colors inline-flex items-center gap-1.5"
+                >
+                  <span>✈️ Holiday & Travel Packages</span>
+                </a>
+              </li>
+              <li>
+                <a 
+                  href={buildDirectWhatsAppInquiry('GCC & Worldwide Express Cargo', 'cargo')} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:text-[#FF6B00] transition-colors inline-flex items-center gap-1.5"
+                >
+                  <span>📦 GCC & Worldwide Express Cargo</span>
+                </a>
+              </li>
+              <li>
+                <a 
+                  href={buildDirectWhatsAppInquiry('Tourist & Work Visa Assistance', 'travel')} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:text-cyan-400 transition-colors inline-flex items-center gap-1.5"
+                >
+                  <span>🛂 Tourist & Work Visa Assistance</span>
+                </a>
+              </li>
+              <li>
+                <a 
+                  href={buildDirectWhatsAppInquiry('Domestic & International Flight Tickets', 'travel')} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:text-cyan-400 transition-colors inline-flex items-center gap-1.5"
+                >
+                  <span>🎫 Domestic & International Flights</span>
+                </a>
+              </li>
+              <li>
+                <a 
+                  href={buildDirectWhatsAppInquiry('Embassy Attestation & Emigration', 'travel')} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:text-cyan-400 transition-colors inline-flex items-center gap-1.5"
+                >
+                  <span>📑 Embassy Attestation & Emigration</span>
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -149,7 +194,7 @@ export default function Footer() {
                 <span>+91 755 996 6621 <strong className="text-slate-400 text-[10px]">(Cargo)</strong></span>
               </a>
               <a 
-                href="https://wa.me/917559966620"
+                href={buildDirectWhatsAppInquiry('Flight Tickets & Travel Services', 'travel')}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-emerald-400 text-emerald-400 flex items-center gap-1.5 transition-colors"
@@ -158,7 +203,7 @@ export default function Footer() {
                 <span>WhatsApp Travels (+91 755 996 6620)</span>
               </a>
               <a 
-                href="https://wa.me/917559966621"
+                href={buildDirectWhatsAppInquiry('GCC & Worldwide Cargo Services', 'cargo')}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-[#FF6B00] text-[#FF6B00] flex items-center gap-1.5 transition-colors"

@@ -45,7 +45,7 @@ export default function BottomMobileBar() {
 
         {/* WhatsApp Chat */}
         <a
-          href={buildDirectWhatsAppInquiry('Mobile Bottom Bar')}
+          href={buildDirectWhatsAppInquiry('Flight Tickets & Travel Services', 'travel')}
           target="_blank"
           rel="noopener noreferrer"
           className="flex-1 py-1.5 flex flex-col items-center justify-center text-emerald-400 hover:text-emerald-300 transition-colors"

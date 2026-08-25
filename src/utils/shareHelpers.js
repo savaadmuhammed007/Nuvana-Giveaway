@@ -32,12 +32,30 @@ ${targetUrl}
   return `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
 }
 
-export function buildDirectWhatsAppInquiry(serviceName = 'General Inquiry', category = 'travel') {
-  const isCargo = category === 'cargo' || serviceName.toLowerCase().includes('cargo') || serviceName.toLowerCase().includes('freight') || serviceName.toLowerCase().includes('baggage') || serviceName.toLowerCase().includes('courier') || serviceName.toLowerCase().includes('shop');
+export function buildDirectWhatsAppInquiry(serviceName = '', category = 'travel') {
+  const isCargo = category === 'cargo' || 
+    serviceName.toLowerCase().includes('cargo') || 
+    serviceName.toLowerCase().includes('freight') || 
+    serviceName.toLowerCase().includes('baggage') || 
+    serviceName.toLowerCase().includes('courier') || 
+    serviceName.toLowerCase().includes('shop');
   const number = isCargo ? CONTACT_CONFIG.cargoWhatsApp : CONTACT_CONFIG.travelsWhatsApp;
   const brandDivision = isCargo ? 'Nuvana.ex Cargo' : 'Nuvana.go Travels';
   
-  const message = `Hello ${brandDivision} Pappinisseri team, I would like to enquire about your *${serviceName}* services.`;
+  // Clean up any internal prefixes or raw office enquiry text
+  let cleanTitle = serviceName
+    .replace(/^Core Operations:\s*/i, '')
+    .replace(/^Travel Service:\s*/i, '')
+    .replace(/^Pappinisseri Office Inquiry/i, '')
+    .replace(/^Mobile Bottom Bar/i, '')
+    .replace(/^General Inquiry/i, '')
+    .trim();
+
+  if (!cleanTitle) {
+    cleanTitle = isCargo ? 'Cargo & Courier Services' : 'Flight Tickets & Travel Services';
+  }
+
+  const message = `Hello ${brandDivision}, I would like to enquire about *${cleanTitle}*.`;
   return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 }
 

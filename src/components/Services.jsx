@@ -164,7 +164,7 @@ export default function Services() {
                   {/* Quick WhatsApp Inquiry */}
                   <div className="mt-5 pt-4 border-t border-white/[0.07] flex items-center justify-between">
                     <a
-                      href={buildDirectWhatsAppInquiry(`Core Operations: ${op.title}`, 'cargo')}
+                      href={buildDirectWhatsAppInquiry(op.title, 'cargo')}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs font-semibold text-slate-400 hover:text-amber-400 flex items-center gap-1.5 transition-colors"
@@ -245,7 +245,7 @@ export default function Services() {
                   {/* Quick WhatsApp Inquiry */}
                   <div className="mt-5 pt-4 border-t border-white/[0.07] flex items-center justify-between">
                     <a
-                      href={buildDirectWhatsAppInquiry(`Travel Service: ${srv.title}`, 'travel')}
+                      href={buildDirectWhatsAppInquiry(srv.title, 'travel')}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs font-semibold text-slate-400 hover:text-cyan-400 flex items-center gap-1.5 transition-colors"

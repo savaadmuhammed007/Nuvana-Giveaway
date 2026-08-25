@@ -75,11 +75,11 @@ export default function CompanyInfo() {
                 <div>
                   <strong className="text-white block">Phone & WhatsApp:</strong>
                   <div className="flex flex-wrap items-center gap-3 mt-1.5">
-                    <a href="https://wa.me/917559966620" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/10">
+                    <a href={buildDirectWhatsAppInquiry('Flight Tickets & Travel Services', 'travel')} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/10">
                       <span className="font-semibold text-white">+91 755 996 6620</span>
                       <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">Travels</span>
                     </a>
-                    <a href="https://wa.me/917559966621" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF6B00] transition-colors flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/10">
+                    <a href={buildDirectWhatsAppInquiry('GCC & Worldwide Cargo Services', 'cargo')} target="_blank" rel="noopener noreferrer" className="hover:text-[#FF6B00] transition-colors flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/10">
                       <span className="font-semibold text-white">+91 755 996 6621</span>
                       <span className="text-xs px-2 py-0.5 rounded-full bg-[#FF6B00]/15 text-[#FF6B00] border border-[#FF6B00]/30">Cargo</span>
                     </a>
@@ -102,7 +102,7 @@ export default function CompanyInfo() {
           {/* CTAs */}
           <div className="pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center gap-3">
             <a
-              href={buildDirectWhatsAppInquiry('Pappinisseri Office Inquiry', 'travel')}
+              href={buildDirectWhatsAppInquiry('Flight Tickets & Travel Services', 'travel')}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-1/2 py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 cursor-pointer transition-all"
