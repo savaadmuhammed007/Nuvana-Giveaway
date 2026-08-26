@@ -19,10 +19,24 @@ import {
   AlertTriangle,
   LogOut,
   CheckSquare,
-  Square
+  Square,
+  MapPin,
+  Share2,
+  Globe
 } from 'lucide-react';
 
 const ADMIN_PIN = 'pappinisseri2026';
+
+const QR_LOCATION_NAMES = {
+  'pappinisseri-junction': 'Pappinisseri Main Junction Poster',
+  'bus-stand': 'Pappinisseri Bus Stand Shelter',
+  'keechery-poster': 'Keecheri Market Entrance',
+  'railway-station': 'Pappinisseri Railway Station Road',
+  'dharmasala-hub': 'Dharmasala College Junction',
+  'valapattanam-gate': 'Valapattanam Toll / Highway',
+  'direct-web': 'Direct Website / Organic',
+  'referral-link': 'Friend Referral Link (WhatsApp)'
+};
 
 export default function AdminPage() {
   const { 
@@ -70,34 +84,86 @@ export default function AdminPage() {
     showToast('Logged out of Admin Portal.', 'info');
   };
 
-  // Analytics
+  // Accurate Dynamic Analytics Calculations
   const totalEntriesCount = entries.length;
-  const totalReferrals = entries.reduce((acc, curr) => acc + (curr.referralCount || 0), 0);
+  const totalReferrals = entries.reduce((acc, curr) => acc + (Number(curr.referralCount) || 0), 0);
+  const totalReferrersCount = entries.filter(e => (Number(e.referralCount) || 0) > 0).length;
+  const referredLeadsCount = entries.filter(e => Boolean(e.referredBy)).length;
+  const viralConversionRate = totalEntriesCount > 0 ? ((totalReferrals / totalEntriesCount) * 100).toFixed(1) : '0.0';
 
-  const serviceCounts = {
-    Travel: entries.filter(e => e.service === 'Travel').length,
-    Cargo: entries.filter(e => e.service === 'Cargo').length,
-    Visa: entries.filter(e => e.service === 'Visa').length,
-    Ticketing: entries.filter(e => e.service === 'Ticketing').length,
-    'Multiple Services': entries.filter(e => e.service === 'Multiple Services').length
-  };
-  const topService = Object.entries(serviceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Travel';
+  // 1. Dynamic Service Demand Breakdown
+  const serviceFrequency = entries.reduce((acc, curr) => {
+    const raw = (curr.service || '').trim() || 'General Inquiry';
+    acc[raw] = (acc[raw] || 0) + 1;
+    return acc;
+  }, {});
 
-  // QR Analytics List
-  const qrList = Object.entries(qrAnalytics).map(([key, data]) => {
-    const matchingEntries = entries.filter(e => (e.qrSource || '').toLowerCase() === key.toLowerCase()).length;
-    const scans = Math.max(data.scans || 1, matchingEntries);
-    const convRate = scans > 0 ? ((matchingEntries / scans) * 100).toFixed(1) : '0.0';
+  const serviceList = Object.entries(serviceFrequency)
+    .map(([name, count]) => ({
+      name,
+      count,
+      percentage: totalEntriesCount > 0 ? ((count / totalEntriesCount) * 100).toFixed(1) : '0.0'
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  const topServiceItem = serviceList[0];
+  const topService = topServiceItem ? topServiceItem.name : (totalEntriesCount > 0 ? 'General Inquiry' : 'No Data Yet');
+  const topServiceCount = topServiceItem ? topServiceItem.count : 0;
+  const topServicePct = topServiceItem ? topServiceItem.percentage : '0.0';
+
+  // 2. Dynamic Location / Area Breakdown
+  const locationFrequency = entries.reduce((acc, curr) => {
+    const loc = (curr.location || '').trim() || 'Kerala';
+    acc[loc] = (acc[loc] || 0) + 1;
+    return acc;
+  }, {});
+
+  const locationList = Object.entries(locationFrequency)
+    .map(([name, count]) => ({
+      name,
+      count,
+      percentage: totalEntriesCount > 0 ? ((count / totalEntriesCount) * 100).toFixed(1) : '0.0'
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6);
+
+  // 3. Dynamic Acquisition Channels & QR Posters
+  const defaultKeys = [
+    'pappinisseri-junction',
+    'bus-stand',
+    'keechery-poster',
+    'railway-station',
+    'dharmasala-hub',
+    'valapattanam-gate',
+    'direct-web',
+    'referral-link'
+  ];
+
+  const actualKeysInEntries = entries.map(e => (e.qrSource || 'direct-web').toLowerCase().trim());
+  const allKnownKeys = Array.from(new Set([...defaultKeys, ...Object.keys(qrAnalytics || {}), ...actualKeysInEntries]));
+
+  const qrList = allKnownKeys.map((key) => {
+    const data = qrAnalytics[key] || {};
+    const matchingEntries = entries.filter(e => {
+      const source = (e.qrSource || 'direct-web').toLowerCase().trim();
+      return source === key.toLowerCase();
+    }).length;
+    const scans = Math.max(data.scans || 0, matchingEntries);
+    const convRate = scans > 0 ? ((matchingEntries / scans) * 100).toFixed(1) : (matchingEntries > 0 ? '100.0' : '0.0');
     return {
       key,
-      name: data.name || key,
+      name: data.name || QR_LOCATION_NAMES[key] || `Channel: ${key}`,
       scans,
       entries: matchingEntries,
       conversion: convRate
     };
-  }).sort((a, b) => b.entries - a.entries);
+  }).sort((a, b) => b.entries - a.entries || b.scans - a.scans);
 
-  const topQrSource = qrList[0]?.name || 'Pappinisseri Junction';
+  const topQrSourceItem = qrList.find(q => q.entries > 0) || qrList[0];
+  const topQrSource = topQrSourceItem && (topQrSourceItem.entries > 0 || topQrSourceItem.scans > 0)
+    ? topQrSourceItem.name
+    : (totalEntriesCount > 0 ? 'Direct Website / Organic' : 'No Poster Scans Yet');
+  const topQrEntriesCount = topQrSourceItem ? topQrSourceItem.entries : 0;
 
   // Filtered entries
   const filteredEntries = entries.filter(e => {
@@ -426,86 +492,219 @@ export default function AdminPage() {
 
             {/* TAB 2: OVERVIEW ANALYTICS */}
             {activeTab === 'analytics' && (
-              <div className="space-y-6">
+              <div className="space-y-6 text-left">
                 
-                {/* 4 Metric Cards */}
+                {/* 4 KPI Metric Cards */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="glass-card p-5 rounded-2xl border border-slate-800">
                     <div className="text-xs text-slate-400 flex items-center justify-between">
-                      <span>Total Leads</span>
+                      <span>Total Verified Leads</span>
                       <Users className="w-4 h-4 text-amber-400" />
                     </div>
                     <div className="text-3xl font-black text-white mt-1 font-mono">
                       {totalEntriesCount}
                     </div>
                     <div className="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" /> Live campaign leads
+                      <TrendingUp className="w-3 h-3" /> Live verified database
                     </div>
                   </div>
 
                   <div className="glass-card p-5 rounded-2xl border border-slate-800">
                     <div className="text-xs text-slate-400 flex items-center justify-between">
-                      <span>Viral Referrals</span>
+                      <span>Viral Referral Bonus</span>
                       <Sparkles className="w-4 h-4 text-emerald-400" />
                     </div>
                     <div className="text-3xl font-black text-white mt-1 font-mono">
                       {totalReferrals}
                     </div>
                     <div className="text-[11px] text-slate-400 mt-1">
-                      WhatsApp bonus tickets
+                      {totalReferrersCount} promoters • {referredLeadsCount} referred leads ({viralConversionRate}%)
                     </div>
                   </div>
 
                   <div className="glass-card p-5 rounded-2xl border border-slate-800">
                     <div className="text-xs text-slate-400 flex items-center justify-between">
-                      <span>Top Service</span>
+                      <span>Top Service Demand</span>
                       <Plane className="w-4 h-4 text-cyan-400" />
                     </div>
-                    <div className="text-2xl font-bold text-white mt-1 truncate">
+                    <div className="text-xl font-bold text-white mt-1 truncate" title={topService}>
                       {topService}
                     </div>
-                    <div className="text-[11px] text-slate-400 mt-1">
-                      Highest consumer demand
+                    <div className="text-[11px] text-cyan-400 mt-1">
+                      {topServiceCount} leads ({topServicePct}% share)
                     </div>
                   </div>
 
                   <div className="glass-card p-5 rounded-2xl border border-slate-800">
                     <div className="text-xs text-slate-400 flex items-center justify-between">
-                      <span>Top QR Poster</span>
+                      <span>Top Acquisition Channel</span>
                       <QrCode className="w-4 h-4 text-orange-400" />
                     </div>
-                    <div className="text-lg font-bold text-white mt-1 truncate">
+                    <div className="text-sm font-bold text-white mt-1 truncate" title={topQrSource}>
                       {topQrSource}
                     </div>
                     <div className="text-[11px] text-amber-400 mt-1">
-                      Best performing poster
+                      {topQrEntriesCount} submissions generated
                     </div>
                   </div>
                 </div>
 
-                {/* Service Breakdown */}
+                {/* Two Column Grid: Dynamic Service Demand & Location Distribution */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  
+                  {/* Dynamic Service Demand Breakdown */}
+                  <div className="glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-bold text-white font-heading flex items-center gap-2">
+                        <Plane className="w-4 h-4 text-amber-400" />
+                        <span>Live Service Demand Breakdown</span>
+                      </h4>
+                      <span className="text-xs text-slate-400 font-mono">
+                        {serviceList.length} Active Services
+                      </span>
+                    </div>
+
+                    {serviceList.length === 0 ? (
+                      <div className="py-8 text-center text-xs text-slate-500 italic">
+                        No service inquiries recorded yet.
+                      </div>
+                    ) : (
+                      <div className="space-y-3.5 max-h-[300px] overflow-y-auto pr-1">
+                        {serviceList.map((svc) => (
+                          <div key={svc.name} className="space-y-1.5">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-slate-200 font-semibold truncate max-w-[200px]" title={svc.name}>
+                                {svc.name}
+                              </span>
+                              <span className="text-slate-400 font-mono">
+                                <strong className="text-white">{svc.count}</strong> leads ({svc.percentage}%)
+                              </span>
+                            </div>
+                            <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800/80">
+                              <div
+                                className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500"
+                                style={{ width: `${Math.max(2, parseFloat(svc.percentage))}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Regional Reach & Area Distribution */}
+                  <div className="glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-bold text-white font-heading flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-cyan-400" />
+                        <span>Regional Concentration (Towns / Areas)</span>
+                      </h4>
+                      <span className="text-xs text-slate-400 font-mono">
+                        {locationList.length} Areas
+                      </span>
+                    </div>
+
+                    {locationList.length === 0 ? (
+                      <div className="py-8 text-center text-xs text-slate-500 italic">
+                        No location data recorded yet.
+                      </div>
+                    ) : (
+                      <div className="space-y-3.5 max-h-[300px] overflow-y-auto pr-1">
+                        {locationList.map((loc) => (
+                          <div key={loc.name} className="space-y-1.5">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-slate-200 font-semibold truncate max-w-[200px]" title={loc.name}>
+                                📍 {loc.name}
+                              </span>
+                              <span className="text-slate-400 font-mono">
+                                <strong className="text-cyan-300">{loc.count}</strong> participants ({loc.percentage}%)
+                              </span>
+                            </div>
+                            <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800/80">
+                              <div
+                                className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-500"
+                                style={{ width: `${Math.max(2, parseFloat(loc.percentage))}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+
+                {/* QR Poster & Acquisition Channels Performance Table */}
                 <div className="glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
-                  <h4 className="text-sm font-bold text-white font-heading">
-                    Service Demand Breakdown (Travel vs Cargo vs Visa vs Ticketing)
-                  </h4>
-                  <div className="space-y-3">
-                    {Object.entries(serviceCounts).map(([svc, count]) => {
-                      const pct = totalEntriesCount > 0 ? ((count / totalEntriesCount) * 100).toFixed(1) : 0;
-                      return (
-                        <div key={svc} className="space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-slate-300 font-medium">{svc}</span>
-                            <span className="text-slate-400 font-mono">{count} leads ({pct}%)</span>
-                          </div>
-                          <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full"
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <div>
+                      <h4 className="text-sm font-bold text-white font-heading flex items-center gap-2">
+                        <QrCode className="w-4 h-4 text-orange-400" />
+                        <span>Acquisition Channels & QR Poster Conversion Performance</span>
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Track physical poster foot traffic vs WhatsApp viral referral conversions.
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => setIsQRGenOpen(true)}
+                      className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <QrCode className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Print Posters</span>
+                    </button>
+                  </div>
+
+                  <div className="overflow-x-auto rounded-xl border border-slate-800/80">
+                    <table className="w-full text-left text-xs text-slate-300">
+                      <thead className="bg-slate-950/80 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800">
+                        <tr>
+                          <th className="p-3.5">Channel / Location</th>
+                          <th className="p-3.5">Tracking Key</th>
+                          <th className="p-3.5 text-center">Scans</th>
+                          <th className="p-3.5 text-center">Verified Leads</th>
+                          <th className="p-3.5 text-right">Conversion Rate</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800/60 bg-slate-950/40">
+                        {qrList.map((row) => {
+                          const convNumber = parseFloat(row.conversion);
+                          return (
+                            <tr key={row.key} className="hover:bg-slate-900/50 transition-colors">
+                              <td className="p-3.5 font-semibold text-white flex items-center gap-2">
+                                {row.key.includes('referral') ? (
+                                  <Share2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                ) : row.key.includes('direct') ? (
+                                  <Globe className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                ) : (
+                                  <QrCode className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                                )}
+                                <span className="truncate max-w-xs">{row.name}</span>
+                              </td>
+                              <td className="p-3.5 font-mono text-slate-400 text-[11px]">{row.key}</td>
+                              <td className="p-3.5 text-center font-mono font-bold text-slate-200">
+                                {row.scans}
+                              </td>
+                              <td className="p-3.5 text-center font-mono font-bold text-amber-400">
+                                {row.entries}
+                              </td>
+                              <td className="p-3.5 text-right font-mono">
+                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                                  convNumber >= 30
+                                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                                    : convNumber >= 10
+                                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                                }`}>
+                                  {row.conversion}%
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
 
