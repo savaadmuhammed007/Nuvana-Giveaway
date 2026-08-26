@@ -20,29 +20,15 @@ import {
   LogOut,
   CheckSquare,
   Square,
-  MapPin,
-  Share2,
-  Globe
+  MapPin
 } from 'lucide-react';
 
 const ADMIN_PIN = 'pappinisseri2026';
-
-const QR_LOCATION_NAMES = {
-  'pappinisseri-junction': 'Pappinisseri Main Junction Poster',
-  'bus-stand': 'Pappinisseri Bus Stand Shelter',
-  'keechery-poster': 'Keecheri Market Entrance',
-  'railway-station': 'Pappinisseri Railway Station Road',
-  'dharmasala-hub': 'Dharmasala College Junction',
-  'valapattanam-gate': 'Valapattanam Toll / Highway',
-  'direct-web': 'Direct Website / Organic',
-  'referral-link': 'Friend Referral Link (WhatsApp)'
-};
 
 export default function AdminPage() {
   const { 
     navigateTo,
     entries, 
-    qrAnalytics, 
     googleScriptUrl, 
     updateScriptUrl, 
     syncFromGoogleSheets,
@@ -127,43 +113,10 @@ export default function AdminPage() {
     .sort((a, b) => b.count - a.count)
     .slice(0, 6);
 
-  // 3. Dynamic Acquisition Channels & QR Posters
-  const defaultKeys = [
-    'pappinisseri-junction',
-    'bus-stand',
-    'keechery-poster',
-    'railway-station',
-    'dharmasala-hub',
-    'valapattanam-gate',
-    'direct-web',
-    'referral-link'
-  ];
-
-  const actualKeysInEntries = entries.map(e => (e.qrSource || 'direct-web').toLowerCase().trim());
-  const allKnownKeys = Array.from(new Set([...defaultKeys, ...Object.keys(qrAnalytics || {}), ...actualKeysInEntries]));
-
-  const qrList = allKnownKeys.map((key) => {
-    const data = qrAnalytics[key] || {};
-    const matchingEntries = entries.filter(e => {
-      const source = (e.qrSource || 'direct-web').toLowerCase().trim();
-      return source === key.toLowerCase();
-    }).length;
-    const scans = Math.max(data.scans || 0, matchingEntries);
-    const convRate = scans > 0 ? ((matchingEntries / scans) * 100).toFixed(1) : (matchingEntries > 0 ? '100.0' : '0.0');
-    return {
-      key,
-      name: data.name || QR_LOCATION_NAMES[key] || `Channel: ${key}`,
-      scans,
-      entries: matchingEntries,
-      conversion: convRate
-    };
-  }).sort((a, b) => b.entries - a.entries || b.scans - a.scans);
-
-  const topQrSourceItem = qrList.find(q => q.entries > 0) || qrList[0];
-  const topQrSource = topQrSourceItem && (topQrSourceItem.entries > 0 || topQrSourceItem.scans > 0)
-    ? topQrSourceItem.name
-    : (totalEntriesCount > 0 ? 'Direct Website / Organic' : 'No Poster Scans Yet');
-  const topQrEntriesCount = topQrSourceItem ? topQrSourceItem.entries : 0;
+  const topLocationItem = locationList[0];
+  const topLocation = topLocationItem ? topLocationItem.name : (totalEntriesCount > 0 ? 'Kerala' : 'No Data Yet');
+  const topLocationCount = topLocationItem ? topLocationItem.count : 0;
+  const topLocationPct = topLocationItem ? topLocationItem.percentage : '0.0';
 
   // Filtered entries
   const filteredEntries = entries.filter(e => {
@@ -537,14 +490,14 @@ export default function AdminPage() {
 
                   <div className="glass-card p-5 rounded-2xl border border-slate-800">
                     <div className="text-xs text-slate-400 flex items-center justify-between">
-                      <span>Top Acquisition Channel</span>
-                      <QrCode className="w-4 h-4 text-orange-400" />
+                      <span>Top Region / Town</span>
+                      <MapPin className="w-4 h-4 text-orange-400" />
                     </div>
-                    <div className="text-sm font-bold text-white mt-1 truncate" title={topQrSource}>
-                      {topQrSource}
+                    <div className="text-xl font-bold text-white mt-1 truncate" title={topLocation}>
+                      {topLocation}
                     </div>
                     <div className="text-[11px] text-amber-400 mt-1">
-                      {topQrEntriesCount} submissions generated
+                      {topLocationCount} participants ({topLocationPct}% share)
                     </div>
                   </div>
                 </div>
@@ -632,80 +585,6 @@ export default function AdminPage() {
                     )}
                   </div>
 
-                </div>
-
-                {/* QR Poster & Acquisition Channels Performance Table */}
-                <div className="glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                    <div>
-                      <h4 className="text-sm font-bold text-white font-heading flex items-center gap-2">
-                        <QrCode className="w-4 h-4 text-orange-400" />
-                        <span>Acquisition Channels & QR Poster Conversion Performance</span>
-                      </h4>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        Track physical poster foot traffic vs WhatsApp viral referral conversions.
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={() => setIsQRGenOpen(true)}
-                      className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
-                    >
-                      <QrCode className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Print Posters</span>
-                    </button>
-                  </div>
-
-                  <div className="overflow-x-auto rounded-xl border border-slate-800/80">
-                    <table className="w-full text-left text-xs text-slate-300">
-                      <thead className="bg-slate-950/80 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800">
-                        <tr>
-                          <th className="p-3.5">Channel / Location</th>
-                          <th className="p-3.5">Tracking Key</th>
-                          <th className="p-3.5 text-center">Scans</th>
-                          <th className="p-3.5 text-center">Verified Leads</th>
-                          <th className="p-3.5 text-right">Conversion Rate</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-800/60 bg-slate-950/40">
-                        {qrList.map((row) => {
-                          const convNumber = parseFloat(row.conversion);
-                          return (
-                            <tr key={row.key} className="hover:bg-slate-900/50 transition-colors">
-                              <td className="p-3.5 font-semibold text-white flex items-center gap-2">
-                                {row.key.includes('referral') ? (
-                                  <Share2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                                ) : row.key.includes('direct') ? (
-                                  <Globe className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                                ) : (
-                                  <QrCode className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                                )}
-                                <span className="truncate max-w-xs">{row.name}</span>
-                              </td>
-                              <td className="p-3.5 font-mono text-slate-400 text-[11px]">{row.key}</td>
-                              <td className="p-3.5 text-center font-mono font-bold text-slate-200">
-                                {row.scans}
-                              </td>
-                              <td className="p-3.5 text-center font-mono font-bold text-amber-400">
-                                {row.entries}
-                              </td>
-                              <td className="p-3.5 text-right font-mono">
-                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                                  convNumber >= 30
-                                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                                    : convNumber >= 10
-                                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-                                      : 'bg-slate-800 text-slate-400 border-slate-700'
-                                }`}>
-                                  {row.conversion}%
-                                </span>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
 
               </div>
