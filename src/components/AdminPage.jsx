@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useCampaign } from '../context/CampaignContext';
-import confetti from 'canvas-confetti';
+import LuckyDrawArena from './LuckyDrawArena';
 import { 
-  Shield, 
   Lock, 
   BarChart3, 
   Users, 
@@ -13,20 +12,14 @@ import {
   Search, 
   RefreshCw, 
   Settings, 
-  CheckCircle2, 
   TrendingUp,
-  MapPin,
-  Package,
   Plane,
-  FileText,
-  Ticket,
   ArrowLeft,
   Trash2,
   AlertTriangle,
   LogOut,
   CheckSquare,
-  Square,
-  ExternalLink
+  Square
 } from 'lucide-react';
 
 const ADMIN_PIN = 'pappinisseri2026';
@@ -59,11 +52,6 @@ export default function AdminPage() {
   const [selectedIds, setSelectedIds] = useState([]);
   const [entryToDelete, setEntryToDelete] = useState(null); // single entry modal
   const [showBatchDeleteModal, setShowBatchDeleteModal] = useState(false);
-
-  // Lucky Draw State
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [winner, setWinner] = useState(null);
-  const [selectedPrizeTier, setSelectedPrizeTier] = useState('1st Prize: Luxury Resort Stay');
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -153,46 +141,6 @@ export default function AdminPage() {
       setSelectedIds([]);
       setShowBatchDeleteModal(false);
     }
-  };
-
-  // Lucky Draw
-  const handlePickLuckyWinner = () => {
-    if (entries.length === 0) {
-      showToast('No entries available to draw from.', 'warning');
-      return;
-    }
-
-    setIsDrawing(true);
-    setWinner(null);
-
-    const pool = [];
-    entries.forEach(entry => {
-      pool.push(entry);
-      const bonus = Math.min(5, entry.referralCount || 0);
-      for (let i = 0; i < bonus; i++) {
-        pool.push(entry);
-      }
-    });
-
-    let counter = 0;
-    const interval = setInterval(() => {
-      const randomIdx = Math.floor(Math.random() * pool.length);
-      setWinner(pool[randomIdx]);
-      counter++;
-
-      if (counter > 25) {
-        clearInterval(interval);
-        const finalWinner = pool[Math.floor(Math.random() * pool.length)];
-        setWinner(finalWinner);
-        setIsDrawing(false);
-
-        confetti({
-          particleCount: 250,
-          spread: 100,
-          origin: { y: 0.6 }
-        });
-      }
-    }, 100);
   };
 
   return (
@@ -566,61 +514,7 @@ export default function AdminPage() {
 
             {/* TAB 3: LUCKY DRAW TOOL */}
             {activeTab === 'draw' && (
-              <div className="space-y-6 text-center py-6 glass-panel rounded-3xl border border-slate-800 p-8">
-                <div className="max-w-md mx-auto space-y-2">
-                  <h4 className="text-2xl font-bold text-white font-heading">
-                    🎉 Launch Day Lucky Draw Randomizer
-                  </h4>
-                  <p className="text-xs text-slate-400">
-                    Transparent, weighted raffle drawing tool. Bonus referral tickets automatically increase winning probability.
-                  </p>
-                </div>
-
-                <div className="flex justify-center gap-3">
-                  {['1st Prize: Luxury Resort Stay', '2nd Prize: Free Shipment (Up to 10kg)'].map((tier) => (
-                    <button
-                      key={tier}
-                      onClick={() => setSelectedPrizeTier(tier)}
-                      className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${selectedPrizeTier === tier ? 'bg-amber-400 text-slate-950 font-bold shadow-md shadow-amber-400/20' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'}`}
-                    >
-                      {tier}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="p-8 rounded-3xl bg-slate-950/90 border border-amber-500/40 max-w-lg mx-auto min-h-[180px] flex flex-col items-center justify-center shadow-xl">
-                  {winner ? (
-                    <div className="space-y-2 animate-in zoom-in-95 duration-200">
-                      <div className="text-xs uppercase font-extrabold tracking-wider text-amber-400">
-                        🏆 Winner for {selectedPrizeTier}
-                      </div>
-                      <div className="text-3xl font-black text-white font-heading">
-                        {winner.fullName}
-                      </div>
-                      <div className="text-sm font-mono font-bold text-amber-300">
-                        {winner.entryId} • {winner.location}
-                      </div>
-                      <div className="text-xs text-slate-400">
-                        WhatsApp: <span className="font-mono text-white">{winner.phone}</span> ({winner.referralCount || 0} referrals made)
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-slate-500 text-xs">
-                      Click the button below to randomly select a verified winner from all {entries.length} participants!
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <button
-                    onClick={handlePickLuckyWinner}
-                    disabled={isDrawing}
-                    className="px-10 py-4 rounded-2xl font-extrabold text-sm text-slate-950 bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-300 hover:to-orange-300 shadow-xl shadow-amber-500/30 disabled:opacity-50"
-                  >
-                    {isDrawing ? 'Drawing Winner...' : '🎲 SPIN & PICK LUCKY WINNER'}
-                  </button>
-                </div>
-              </div>
+              <LuckyDrawArena entries={entries} showToast={showToast} />
             )}
 
             {/* TAB 5: SETTINGS & GOOGLE SHEETS */}
